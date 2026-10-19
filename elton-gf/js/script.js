@@ -6,6 +6,10 @@
    ============================================================ */
 gsap.registerPlugin(ScrollTrigger);
 
+// always start at the top (otherwise reload re-opens mid-story on phones)
+if('scrollRestoration' in history) history.scrollRestoration = 'manual';
+if(document.documentElement.scrollTop || document.body.scrollTop || window.pageYOffset) window.scrollTo(0, 0);
+
 let lenis;
 let audioCtx, masterGain, musicGain, isMusicOn = false, musicTimer = null, musicStep = 0;
 
@@ -34,6 +38,10 @@ document.addEventListener('DOMContentLoaded', () => {
   setupFinale();
   setupTopline();
   setupPolaroids();
+
+  // fonts/images can shift layout — keep trigger positions honest
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(() => ScrollTrigger.refresh());
+  window.addEventListener('load', () => ScrollTrigger.refresh());
 });
 
 /* ================= LOADER ================= */
@@ -84,7 +92,6 @@ function initGate(){
     knob.style.transition = withTransition ? 'transform .45s cubic-bezier(.2,.9,.25,1.2)' : 'none';
     knob.style.transform = `translateX(${x}px)`;
     fill.style.transition = withTransition ? 'width .45s ease' : 'none';
-    fill.style.width = (10 + x) + 'px';
     // fill is % based — convert
     fill.style.width = ((x + knob.offsetWidth + 10) / slider.clientWidth * 100) + '%';
     slider.setAttribute('aria-valuenow', Math.round(x / maxX() * 100));
@@ -351,35 +358,45 @@ function setupPolaroids(){
 
 /* ================= FIRST MEET — pinned scrollytelling ================= */
 function setupMeet(){
-  const media = document.querySelector('.meet-media');
   const lines = gsap.utils.toArray('.ml');
 
-  gsap.fromTo(media,
-    { filter: 'blur(14px) saturate(.6)', scale: 1.08, rotation: -1.5 },
-    {
-      filter: 'blur(0px) saturate(1)', scale: 1, rotation: 0, ease: 'none',
-      scrollTrigger: { trigger: '#firstMeet', start: 'top 70%', end: 'top 5%', scrub: true },
-    });
+  // scene starts "unfocused" — everything reveals across the pinned runway
+  gsap.set('.meet-media img', { filter: 'blur(12px) saturate(.55)', scale: 1.1, rotation: -1.5, transformOrigin: '50% 45%' });
+  gsap.set('.meet-frame', { opacity: 0, scale: 1.05 });
+  gsap.set('.meet-chip', { y: 26, opacity: 0, scale: .85 });
+  gsap.set('.meet-copy .chap-tag', { x: -16, opacity: 0 });
+  gsap.set(lines, { opacity: .14, y: 14 });
 
-  // light the story lines based on scroll progress through the tall section
-  ScrollTrigger.create({
-    trigger: '#firstMeet',
-    start: 'top 45%',
-    end: 'bottom 90%',
-    onUpdate: self => {
-      const p = self.progress;
-      lines.forEach((el, i) => {
-        const at = (i + 1) / (lines.length + 0.6);
-        el.classList.toggle('lit', p >= at * 0.72);
-      });
+  // one master timeline scrubbed over the WHOLE sticky session
+  // (top of section hits top of viewport → bottom of section hits bottom)
+  const tl = gsap.timeline({
+    defaults: { ease: 'none' },
+    scrollTrigger: {
+      trigger: '#firstMeet',
+      start: 'top top',
+      end: 'bottom bottom',
+      scrub: .5,
+      invalidateOnRefresh: true,
     },
   });
 
-  // chip pops in
-  gsap.fromTo('.meet-chip', { y: 24, opacity: 0 }, {
-    y: 0, opacity: 1, duration: .7, ease: 'back.out(2)',
-    scrollTrigger: { trigger: '#firstMeet', start: 'top 55%', toggleActions: 'play none none reverse' },
+  // 1 · the photo comes into focus; frame + chip textures reveal
+  tl.to('.meet-media img', { filter: 'blur(0px) saturate(1)', scale: 1, rotation: 0, duration: 1.4 }, 0)
+    .to('.meet-frame', { opacity: 1, scale: 1, duration: 1 }, .15)
+    .to('.meet-copy .chap-tag', { x: 0, opacity: 1, duration: .8 }, .3)
+    .to('.meet-chip', { y: 0, opacity: 1, scale: 1, duration: .8, ease: 'power2.out' }, .55);
+
+  // 2 · the story lines light up one by one
+  lines.forEach((el, i) => {
+    tl.to(el, { opacity: 1, y: 0, duration: 1 }, 1.7 + i * 1.1);
   });
+
+  // 3 · then the scene keeps moving with the scroll:
+  //     slow zoom on the photo, frame/chip drift at their own rates
+  tl.to('.meet-media img', { scale: 1.14, yPercent: 4, duration: 6.8 }, 2.3)
+    .to('.meet-media', { y: -16, duration: 5 }, 4)
+    .to('.meet-chip', { y: -8, duration: 4.5 }, 4.5)
+    .to('.meet-copy', { y: -10, duration: 4 }, 5);
 }
 
 /* ================= STRIP — build + drag + tilt ================= */
@@ -554,8 +571,14 @@ function setupTimelineScroll(){
   });
 }
 
-/* ================= LETTER — word-by-word colour fill ================= */
+/* ================= LETTER — scroll-driven word fill ================= */
 function setupLetterFill(){
+  // section header drifts in on scroll
+  gsap.fromTo('#letter .chap-tag', { y: 34, opacity: 0 }, {
+    y: 0, opacity: 1, ease: 'none',
+    scrollTrigger: { trigger: '#letter', start: 'top 94%', end: 'top 70%', scrub: .4 },
+  });
+
   const ps = gsap.utils.toArray('#letterBody p');
   ps.forEach(p => {
     const nodes = [...p.childNodes];
@@ -593,14 +616,21 @@ function setupLetterFill(){
     words.forEach(w => (w.closest('em') ? inEm : normal).push(w));
     const target = p.classList.contains('letter-sign') ? '#e6447c' : '#241226';
 
+    // paragraph rises + fades in as it enters (same scroll level as ch.01)
+    gsap.fromTo(p, { y: 60, opacity: 0 }, {
+      y: 0, opacity: 1, ease: 'none',
+      scrollTrigger: { trigger: p, start: 'top 96%', end: 'top 60%', scrub: .4 },
+    });
+
+    // words ink in, scrubbed by scroll
     gsap.to(normal, {
       color: target, ease: 'none', stagger: .5,
-      scrollTrigger: { trigger: p, start: 'top 86%', end: 'top 42%', scrub: true },
+      scrollTrigger: { trigger: p, start: 'top 84%', end: 'top 38%', scrub: .5 },
     });
     if(inEm.length){
       gsap.to(inEm, {
         color: '#ff5a3c', ease: 'none', stagger: .5,
-        scrollTrigger: { trigger: p, start: 'top 86%', end: 'top 42%', scrub: true },
+        scrollTrigger: { trigger: p, start: 'top 84%', end: 'top 38%', scrub: .5 },
       });
     }
   });
