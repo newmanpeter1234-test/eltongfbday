@@ -1,0 +1,22 @@
+name: live-check
+on: [workflow_dispatch]
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch the deployed site
+        run: |
+          set -e
+          for u in "https://eltongfbday.vercel.app/" "https://eltongfbday-jefftest.vercel.app/"; do
+            echo "=== $u ==="
+            code=$(curl -sSL -m 25 -o page.html -w "%{http_code}" "$u" || echo CURL_FAIL)
+            echo "HTTP $code"
+            grep -o "<title>[^<]*</title>" page.html || echo "(no title)"
+            echo "--- first bytes ---"
+            head -c 220 page.html; echo
+          done
+          echo "=== asset check ==="
+          a=$(curl -sS -m 25 -o /dev/null -w "%{http_code}" "https://eltongfbday.vercel.app/assets/photos/photo01.jpg" || echo FAIL)
+          j=$(curl -sS -m 25 -o /dev/null -w "%{http_code}" "https://eltongfbday.vercel.app/js/script.js" || echo FAIL)
+          c=$(curl -sS -m 25 -o /dev/null -w "%{http_code}" "https://eltongfbday.vercel.app/css/fonts/great-vibes-latin-400-normal.woff2" || echo FAIL)
+          echo "photo01.jpg=$a script.js=$j font=$c"
