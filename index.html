@@ -3,253 +3,233 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#04050a">
-<title>For Anziya — Happy Birthday</title>
+<meta name="theme-color" content="#f8f2e9">
+<title>Anziya — The Story of Us</title>
 <link rel="stylesheet" href="css/fonts.css">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+
 <!-- LOADER -->
-<div id="loader">
-  <div class="loader-inner">
-    <p class="loader-label">Preparing something special for Anziya</p>
-    <div class="loader-bar"><span id="loaderProgress"></span></div>
-    <p class="loader-percent" id="loaderPercent">0%</p>
+<div id="loader" aria-hidden="true">
+  <div class="ld-stack">
+    <p class="ld-label">gathering our memories</p>
+    <div class="ld-num"><span id="ldNum">0</span><i>%</i></div>
+    <div class="ld-line"><span id="ldBar"></span></div>
   </div>
-  <div class="loader-glow"></div>
 </div>
 
-<!-- GLOBAL CANVASES & AMBIENT -->
-<canvas id="particles"></canvas>
-<div class="ambient">
-  <div class="orb orb--gold"></div>
-  <div class="orb orb--violet"></div>
-  <div class="orb orb--rose"></div>
-  <div class="vignette"></div>
-  <div class="grain"></div>
+<!-- AURORA BACKGROUNDS (light chapters) -->
+<div class="aurora" aria-hidden="true">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
 </div>
 
-<!-- MUSIC TOGGLE -->
-<button id="musicBtn" aria-label="Music">
-  <span class="eq"><i></i><i></i><i></i></span>
-  <span class="music-txt">Sound</span>
+<!-- TOP SCROLL LINE -->
+<div id="topline"><span></span></div>
+
+<!-- SOUND PILL -->
+<button id="musicBtn" class="sound-pill" aria-label="Toggle music" aria-pressed="false">
+  <span class="sp-icon">♪</span>
+  <span class="sp-txt">music</span>
+  <span class="sp-eq"><i></i><i></i><i></i></span>
 </button>
 
-<!-- SCROLL PROGRESS -->
-<div id="scrollProgress"><span></span></div>
-
-<!-- ===== ACT 1: THE GIFT (LOCKED) ===== -->
-<section id="actGift" class="act act--locked">
-  <div class="gift-content">
-    <p class="eyebrow reveal-up">A little something for you…</p>
-
-    <div id="giftWrap">
-      <div id="giftBox" role="button" tabindex="0" aria-label="Tap the gift">
-        <!-- gift via CSS, not image -->
-        <div class="gift-shadow"></div>
-        <div class="gift-box">
-          <div class="box-lid">
-            <div class="lid-top"></div>
-            <div class="lid-front"></div>
-            <div class="lid-side"></div>
-            <div class="ribbon-h"></div>
-            <div class="ribbon-v"></div>
-            <div class="bow">
-              <div class="bow-knot"></div>
-              <div class="bow-loop l"></div>
-              <div class="bow-loop r"></div>
-              <div class="bow-tail l"></div>
-              <div class="bow-tail r"></div>
-            </div>
-          </div>
-          <div class="box-body">
-            <div class="box-front"></div>
-            <div class="box-side"></div>
-            <div class="box-top-inner"></div>
-            <div class="ribbon-h body-r"></div>
-            <div class="ribbon-v body-r"></div>
-            <div class="light-beam"></div>
-          </div>
-        </div>
-        <div class="gift-glow"></div>
-      </div>
-      <p class="tap-hint"><span class="arrow">↓</span> Tap the gift</p>
+<!-- ===== GATE — SLIDE TO BEGIN ===== -->
+<section id="gate" class="gate">
+  <div class="gate-ticker" aria-hidden="true">
+    <div class="tick-row">
+      <span>Happy Birthday ✦ Anziya ✦ Nov 8 ✦ Our Story ✦ </span>
+      <span>Happy Birthday ✦ Anziya ✦ Nov 8 ✦ Our Story ✦ </span>
     </div>
-
-    <p class="gift-sub">Almost three years in the making • One unforgettable birthday</p>
+    <div class="tick-row rev">
+      <span>three years ✦ countless memories ✦ still us ✦ </span>
+      <span>three years ✦ countless memories ✦ still us ✦ </span>
+    </div>
   </div>
 
-  <!-- burst canvas handled by JS -->
-  <div id="giftBurst"></div>
+  <div class="gate-card">
+    <p class="gate-eyebrow">for my favourite person</p>
+    <h1 class="gate-title">
+      <span class="gt-l1">Happy</span>
+      <span class="gt-l2">Birthday,</span>
+      <span class="gt-l3">Anziya<i class="heart">♥</i></span>
+    </h1>
+    <p class="gate-sub">I made you a little world to scroll through —<br>our chapters, in order.</p>
+
+    <div id="slider" class="slider" role="slider" tabindex="0" aria-label="Slide to begin" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+      <div class="sl-fill" id="slFill"></div>
+      <span class="sl-hint" id="slHint">slide to begin</span>
+      <div class="sl-knob" id="slKnob"><span>→</span></div>
+    </div>
+    <p class="gate-note">sound on — it's part of the gift</p>
+  </div>
+
+  <p class="gate-foot">08 · 11 · a day the world got brighter</p>
+  <div id="iris"></div>
 </section>
 
-<!-- MAIN SCROLLABLE STORY (hidden until gift opened) -->
+<!-- ===== STORY (unlocks after slide) ===== -->
 <main id="story">
-  <!-- REVEAL -->
-  <section id="reveal" class="section section--reveal">
-    <div class="reveal-inner">
-      <p class="eyebrow gold-track">November 8 • A day the world got brighter</p>
-      <h1 class="title">
-        <span class="title-small">Happy Birthday</span>
-        <span class="title-name">Anziya</span>
-      </h1>
-      <div class="gold-divider"><span></span></div>
-      <p class="reveal-lead">A little journey through some memories…<br>and every reason you mean so much to me.</p>
-      <div class="scroll-indicator">
-        <span>Scroll</span>
-        <div class="needle"></div>
-      </div>
-    </div>
-    <div class="reveal-photo-fader">
-      <img src="assets/photos/photo04.jpg" alt="">
+
+  <!-- HERO -->
+  <section id="hero" class="sec sec--hero">
+    <div class="hero-badge"><span class="dot"></span>chapter zero · today</div>
+    <h2 class="hero-name" aria-label="Anziya">
+      <span class="ln" data-word="ANZIYA"></span>
+    </h2>
+    <p class="hero-tag">Almost three years of us — <em>and still my favourite story.</em></p>
+
+    <figure class="polaroid p-left" data-float="1">
+      <img src="assets/photos/photo05.jpg" alt="The mirror photo">
+      <figcaption>the first meet ♥</figcaption>
+    </figure>
+    <figure class="polaroid p-right" data-float="-1">
+      <img src="assets/photos/photo04.jpg" alt="Us being goofy">
+      <figcaption>good chaos</figcaption>
+    </figure>
+
+    <div class="scroll-cue" aria-hidden="true">
+      <span>scroll</span>
+      <div class="cue-track"><i></i></div>
     </div>
   </section>
 
-  <!-- CHAPTER NAV -->
-  <div id="chapterNav">
-    <span class="ch-num">01</span>
-    <div class="ch-line"><i id="chProgress"></i></div>
-    <span class="ch-total">/ 10</span>
+  <!-- DIAGONAL MARQUEE -->
+  <div class="strip-marquee" aria-hidden="true">
+    <div class="sm-row">
+      <span>one meet ✦ one beginning ✦ one beautiful story ✦ one meet ✦ one beginning ✦ one beautiful story ✦</span>
+      <span>one meet ✦ one beginning ✦ one beautiful story ✦ one meet ✦ one beginning ✦ one beautiful story ✦</span>
+    </div>
   </div>
 
-  <!-- CHAPTER 01: PHOTO MEMORIES -->
-  <section id="photos" class="section section--photos">
-    <header class="chapter-header">
-      <p class="ch-label">Chapter One — The First Meet → Today</p>
-      <h2>Every chapter<br><em>with you</em> has been my favorite</h2>
-      <p class="ch-desc">Almost three years. Countless memories. Still my favorite person.<br>From strangers to friends, from friends to us.</p>
-    </header>
-
-    <div class="photo-stack" id="photoStack">
-      <!-- populated by JS -->
-    </div>
-
-    <!-- COLLAGE HERO -->
-    <div class="collage-wrap reveal-on-scroll">
-      <div class="collage-frame">
-        <img src="assets/photos/collage.jpg" alt="Our collage">
-        <div class="collage-glow"></div>
+  <!-- CHAPTER 01 — THE FIRST MEET (pinned scrollytelling, THE mirror photo) -->
+  <section id="firstMeet" class="sec sec--meet">
+    <div class="meet-sticky">
+      <div class="meet-media">
+        <img src="assets/photos/photo05.jpg" alt="The mirror photo — where it all began">
+        <div class="meet-frame"></div>
+        <span class="meet-chip">the photo that started everything</span>
       </div>
-      <p class="collage-caption">Four frames. One story. Still writing it.</p>
-    </div>
-  </section>
-
-  <!-- CHAPTER 02: VIDEO MEMORIES -->
-  <section id="videos" class="section section--videos">
-    <header class="chapter-header">
-      <p class="ch-label">Chapter Two — Moving Memories</p>
-      <h2>Moments <em>that move</em></h2>
-      <p class="ch-desc">They play on loop, just like they do in my head. Tap to pause. Tap again to play.</p>
-    </header>
-
-    <div class="video-mosaic">
-      <!-- 6 tiles reuse same video with different object-position & start offsets -->
-      <div class="vm-tile vm--large">
-        <video src="assets/videos/memory01.mp4" muted loop playsinline poster="assets/photos/photo01.jpg"></video>
-        <div class="vm-bar"><span></span></div>
-        <span class="vm-label">The way you laugh</span>
-      </div>
-      <div class="vm-tile">
-        <video src="assets/videos/memory01.mp4" muted loop playsinline poster="assets/photos/photo02.jpg"></video>
-        <div class="vm-bar"><span></span></div>
-        <span class="vm-label">Random moments</span>
-      </div>
-      <div class="vm-tile">
-        <video src="assets/videos/memory01.mp4" muted loop playsinline poster="assets/photos/photo03.jpg"></video>
-        <div class="vm-bar"><span></span></div>
-        <span class="vm-label">Just us</span>
-      </div>
-      <div class="vm-tile vm--tall">
-        <video src="assets/videos/memory01.mp4" muted loop playsinline poster="assets/photos/photo08.jpg"></video>
-        <div class="vm-bar"><span></span></div>
-        <span class="vm-label">Our little world</span>
-      </div>
-      <div class="vm-tile vm--wide">
-        <video src="assets/videos/memory01.mp4" muted loop playsinline poster="assets/photos/photo05.jpg"></video>
-        <div class="vm-bar"><span></span></div>
-        <span class="vm-label">Almost 3 years</span>
-      </div>
-      <div class="vm-tile">
-        <video src="assets/videos/memory01.mp4" muted loop playsinline poster="assets/photos/photo06.jpg"></video>
-        <div class="vm-bar"><span></span></div>
-        <span class="vm-label">My favorite person</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- CHAPTER 03: TIMELINE -->
-  <section id="timeline" class="section section--timeline">
-    <header class="chapter-header">
-      <p class="ch-label">Chapter Three — Our Timeline</p>
-      <h2>How we became <em>us</em></h2>
-    </header>
-    <div class="tl-wrap">
-      <div class="tl-line"></div>
-      <div class="tl-items" id="tlItems">
-        <!-- JS populates -->
-      </div>
-    </div>
-  </section>
-
-  <!-- QUIET PAUSE -->
-  <section id="pause" class="section section--pause">
-    <div class="pause-inner">
-      <p class="pause-line l1">But there's one more thing…</p>
-      <p class="pause-line l2">I saved something for the end.</p>
-      <div id="giftSmallWrap">
-        <div id="giftSmall" role="button" tabindex="0" aria-label="Open final gift">
-          <div class="gift-box mini">
-            <div class="box-lid">
-              <div class="lid-top"></div><div class="lid-front"></div>
-              <div class="ribbon-h"></div><div class="ribbon-v"></div>
-              <div class="bow"><div class="bow-knot"></div><div class="bow-loop l"></div><div class="bow-loop r"></div></div>
-            </div>
-            <div class="box-body"><div class="box-front"></div><div class="box-side"></div><div class="light-beam"></div></div>
-          </div>
+      <div class="meet-copy">
+        <p class="chap-tag">chapter 01 — the first meet</p>
+        <div class="meet-lines">
+          <p class="ml">It started with <em>one simple moment</em> —</p>
+          <p class="ml">a mirror, a broken hand, and <em>you.</em></p>
+          <p class="ml">Little did I know I was meeting <em>my favourite person.</em></p>
+          <p class="ml">One meeting. One beginning.<br><em>One beautiful story.</em></p>
         </div>
-        <p class="tap-hint sm">Tap to reveal</p>
       </div>
     </div>
   </section>
 
-  <!-- FINALE -->
-  <section id="finale" class="section section--finale">
-    <canvas id="infinityCanvas"></canvas>
-    <div class="finale-content">
-      <div class="finale-photo-wrap">
-        <img id="finalePhoto" src="assets/photos/photo01.jpg" alt="Anziya">
-        <div class="finale-photo-glow"></div>
-      </div>
-      <h3 class="finale-title">To Be Continued</h3>
-      <div class="finale-lines">
-        <p>Some moments pass, but somehow, they never really leave us.</p>
-        <p>Almost three years down, and I still want a lifetime to go.</p>
-        <p>I don't know what the future holds, but I know who I want in it — <strong>you</strong>.</p>
-        <p>If I had to choose again, I would still choose you — every single time.</p>
-        <p class="finale-bday">Happy Birthday, Anziya ♥</p>
-        <p class="finale-date">November 8 &nbsp;•&nbsp; Forever us</p>
-      </div>
-      <button id="replayBtn" class="btn-gold">Watch it again ↺</button>
-      <p class="finale-foot">Made with all my heart — forever yours.</p>
+  <!-- CHAPTER 02 — MEMORIES (swipe strip, 3D tilt cards) -->
+  <section id="memories" class="sec sec--memories">
+    <header class="sec-head">
+      <p class="chap-tag">chapter 02 — the scrapbook</p>
+      <h2 class="sec-title"><em>Every chapter</em> with you<br>has been my favourite</h2>
+      <p class="drag-hint">drag the cards <span>→</span></p>
+    </header>
+    <div class="strip" id="strip">
+      <!-- cards injected by JS -->
     </div>
-    <div class="stardust" id="stardust"></div>
+    <div class="strip-progress"><span id="stripBar"></span></div>
   </section>
 
-  <footer class="site-footer">
-    <p>For Anziya • Nov 8 • With love, always</p>
+  <!-- CHAPTER 03 — MOVING MEMORIES (dark stage) -->
+  <section id="reel" class="sec sec--reel">
+    <div class="reel-ticker" aria-hidden="true">
+      <div class="rt-row"><span>moments that move ✦ moments that move ✦ moments that move ✦ </span><span>moments that move ✦ moments that move ✦ moments that move ✦ </span></div>
+    </div>
+    <header class="sec-head dark">
+      <p class="chap-tag">chapter 03 — moving memories</p>
+      <h2 class="sec-title">Some moments<br><em>refuse to sit still</em></h2>
+    </header>
+
+    <div class="player" id="player">
+      <video id="bigVideo" src="assets/videos/memory01.mp4" muted loop playsinline poster="assets/photos/photo01.jpg"></video>
+      <button class="play-btn" id="playBtn" aria-label="Play or pause"><span class="pb-icon">▶</span></button>
+      <div class="pl-progress"><span id="plBar"></span></div>
+      <span class="pl-label">tap to pause · tap to play</span>
+    </div>
+
+    <div class="reels" id="reels">
+      <button class="reel" data-t="0"><img src="assets/photos/photo06.jpg" alt=""><span>01 · mall days</span></button>
+      <button class="reel" data-t="4"><img src="assets/photos/photo07.jpg" alt=""><span>02 · mirror laughs</span></button>
+      <button class="reel" data-t="8"><img src="assets/photos/photo09.jpg" alt=""><span>03 · same vibes</span></button>
+    </div>
+  </section>
+
+  <!-- CHAPTER 04 — TIMELINE (horizontal, scroll-driven) -->
+  <section id="timeline" class="sec sec--timeline">
+    <div class="tl-pin">
+      <header class="sec-head tl-head">
+        <p class="chap-tag">chapter 04 — how we became us</p>
+        <h2 class="sec-title">Our little <em>timeline</em></h2>
+      </header>
+      <div class="tl-viewport">
+        <div class="tl-track" id="tlTrack">
+          <div class="tl-line"><i id="tlFill"></i></div>
+          <!-- milestones injected by JS -->
+        </div>
+      </div>
+      <p class="tl-swipe-note">keep scrolling <span>→</span></p>
+    </div>
+  </section>
+
+  <!-- CHAPTER 05 — THE LETTER (word-by-word fill) -->
+  <section id="letter" class="sec sec--letter">
+    <p class="chap-tag center">chapter 05 — the letter</p>
+    <div class="letter-body" id="letterBody">
+      <p>Almost three years ago, our story began — since then you've given me memories I'll never forget, moments I'll always treasure, and a love I never want to lose.</p>
+      <p>Through every high and every low we found our way back to each other; we've changed, we've grown, but we're still <em>us.</em></p>
+      <p>If I could go back, I would choose you all over again — <em>every single time.</em></p>
+      <p class="letter-sign">Happy birthday, my love.</p>
+    </div>
+  </section>
+
+  <!-- FINALE — MAKE A WISH -->
+  <section id="finale" class="sec sec--finale">
+    <canvas id="fwCanvas" aria-hidden="true"></canvas>
+
+    <div class="fin-stage" id="finStage">
+      <button id="wishBtn" class="wish-btn">
+        <span class="wish-ring"></span>
+        <span class="wish-ring r2"></span>
+        <span class="wish-label">make a wish<br><i>✦</i></span>
+      </button>
+      <p class="fin-pre">one last thing is waiting for you…</p>
+    </div>
+
+    <div class="fin-reveal" id="finReveal" aria-hidden="true">
+      <figure class="fin-photo">
+        <img src="assets/photos/photo10.jpg" alt="Us">
+      </figure>
+      <div class="fin-credits">
+        <p>Some moments pass, but they never really leave us.</p>
+        <p>Almost three years down — <em>and I still want a lifetime to go.</em></p>
+        <p>I don't know what the future holds, but I know who I want in it.</p>
+        <h3 class="fin-bday">Happy Birthday,<br>Anziya <i>♥</i></h3>
+        <p class="fin-date">nov 8 · three years in · forever to go</p>
+        <button id="replayBtn" class="btn-again">run it back ↺</button>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <span>made for Anziya · nov 8</span>
+    <span class="foot-h">with all my heart ♥</span>
   </footer>
 </main>
 
-<!-- AUDIO (hidden) -->
-<audio id="bgAudio" loop preload="auto" crossorigin="anonymous"></audio>
-
-<!-- LIBS (vendored locally — no CDN dependency) -->
+<!-- LIBS (vendored) -->
 <script src="js/vendor/gsap.min.js"></script>
 <script src="js/vendor/ScrollTrigger.min.js"></script>
 <script src="js/vendor/lenis.min.js"></script>
 
 <script src="js/config.js"></script>
-<script src="js/particles.js"></script>
+<script src="js/fx.js"></script>
 <script src="js/script.js"></script>
 </body>
 </html>
