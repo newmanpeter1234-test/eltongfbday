@@ -258,7 +258,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   height:320vh; /* scroll runway for the sticky scene */
 }
 .meet-sticky{
-  position:sticky;top:0;height:100svh;
+  position:sticky;top:0;height:100vh;height:100svh;
   display:grid;align-items:center;gap:clamp(24px,4vw,56px);
   grid-template-columns:1fr;max-width:1100px;margin:0 auto;padding:clamp(30px,6svh,52px) 0;
 }
@@ -288,21 +288,21 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 /* meet scene responsive overrides — MUST stay after the base rules above */
 @media(min-width:880px){
   /* never let the photo exceed the viewport on short laptops */
-  .meet-media{max-height:76svh}
-  .meet-media img{max-height:76svh}
+  .meet-media{max-height:76vh;max-height:76svh}
+  .meet-media img{max-height:76vh;max-height:76svh}
 }
 @media(max-width:879px){
   .meet-sticky{grid-template-rows:auto 1fr;gap:18px;padding:20px 0 28px;align-content:center}
-  .meet-media{max-height:42svh;justify-self:center;width:100%;max-width:430px}
-  .meet-media img{aspect-ratio:16/11;max-height:42svh}
+  .meet-media{max-height:42vh;max-height:42svh;justify-self:center;width:100%;max-width:430px}
+  .meet-media img{aspect-ratio:16/11;max-height:42vh;max-height:42svh}
   .ml{font-size:clamp(18px,4.8vw,24px)}
   .meet-lines{gap:12px}
 }
 /* short phones (SE-class) — keep the whole scene inside the viewport */
 @media(max-width:879px) and (max-height:730px){
   .meet-sticky{gap:13px;padding:14px 0 20px}
-  .meet-media{max-height:34svh}
-  .meet-media img{max-height:34svh}
+  .meet-media{max-height:34vh;max-height:34svh}
+  .meet-media img{max-height:34vh;max-height:34svh}
   .ml{font-size:clamp(15.5px,4.3vw,18px)}
   .meet-lines{gap:8px}
   .meet-copy .chap-tag{margin-bottom:10px}
