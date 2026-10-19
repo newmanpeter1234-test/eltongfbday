@@ -4,6 +4,14 @@ gsap.registerPlugin(ScrollTrigger);
 let lenis;
 let audioCtx, masterGain, isMusicOn=false, bgOscillators=[];
 
+/* play() may return undefined in some browsers/environments — never assume a Promise */
+function safePlay(v){
+  try{
+    const p = v.play();
+    if(p && typeof p.catch === 'function') p.catch(()=>{});
+  }catch(e){}
+}
+
 document.addEventListener('DOMContentLoaded', ()=>{
   initLoader();
   ParticleSystem.init();
@@ -117,6 +125,12 @@ function setupGifts(){
     ParticleSystem.burst(rect2.left+rect2.width/2, rect2.top+rect2.height/2, 90);
     spawnDomBurst(rect2.left+rect2.width/2, rect2.top+rect2.height/2);
     playChime(true);
+    // glide into the finale so the infinity show is on screen
+    setTimeout(()=>{
+      const fin = document.getElementById('finale');
+      if(lenis) lenis.scrollTo(fin, {duration:1.6, easing: t=> 1-Math.pow(1-t,3)});
+      else fin.scrollIntoView({behavior:'smooth'});
+    }, 350);
     // trigger infinity canvas
     InfinityCanvas.start();
     // after forming, dissolve is automatic in canvas timeline
@@ -202,7 +216,7 @@ function buildPhotos(){
         <div class="media-curtain ${idx%2===0?'':'right'}"></div>
       </div>
       <div class="photo-text">
-        <p class="photo-num">${ph.num} — ${String(idx+1).padStart(2,'0')}</p>
+        <p class="photo-num">${ph.num} / ${String(CONFIG.photos.length).padStart(2,'0')}</p>
         <h3>${ph.title}</h3>
         <p>${ph.caption}</p>
         <span class="caption-accent">November 8 • Anziya</span>
@@ -228,21 +242,26 @@ function buildTimeline(){
 }
 
 function setupLenis(){
-  lenis = new Lenis({
-    duration:1.15,
-    easing: t=> Math.min(1, 1 - Math.pow(2, -10*t)),
-    smoothWheel:true,
-    smoothTouch:false,
-    gestureOrientation:'vertical',
-  });
-  function raf(time){
-    lenis.raf(time);
-    requestAnimationFrame(raf);
+  // ResizeObserver guard (very old browsers)
+  if(typeof window.ResizeObserver === 'undefined'){
+    window.ResizeObserver = class { observe(){} unobserve(){} disconnect(){} };
   }
-  requestAnimationFrame(raf);
-  lenis.on('scroll', ScrollTrigger.update);
-  gsap.ticker.add(time=> lenis.raf(time*1000));
-  gsap.ticker.lagSmoothing(0);
+  try{
+    lenis = new Lenis({
+      duration:1.15,
+      easing: t=> Math.min(1, 1 - Math.pow(2, -10*t)),
+      smoothWheel:true,
+      smoothTouch:false,
+      gestureOrientation:'vertical',
+    });
+    // drive Lenis from GSAP ticker only (single RAF — avoids double-speed scroll)
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add(time=> lenis.raf(time*1000));
+    gsap.ticker.lagSmoothing(0);
+  }catch(e){
+    // graceful fallback to native scrolling
+    lenis = null;
+  }
 }
 
 function setupScrollAnimations(){
@@ -328,7 +347,7 @@ function setupVideos(){
       entries.forEach(ent=>{
         if(ent.isIntersecting){
           // stagger play
-          setTimeout(()=>{ v.play().catch(()=>{}); }, idx*80);
+          setTimeout(()=>{ safePlay(v); }, idx*80);
         } else {
           v.pause();
         }
@@ -341,7 +360,7 @@ function setupVideos(){
       if(v.duration) bar.style.width = (v.currentTime/v.duration*100)+'%';
     });
     tile.addEventListener('click', ()=>{
-      if(v.paused){ v.play().catch(()=>{}); tile.classList.remove('paused'); }
+      if(v.paused){ safePlay(v); tile.classList.remove('paused'); }
       else { v.pause(); tile.classList.add('paused'); }
     });
     // ensure muted autoplay
@@ -349,18 +368,13 @@ function setupVideos(){
   });
 }
 function handleVideoAutoplay(){
-  document.querySelectorAll('.vm-tile video').forEach(v=>{ v.play().catch(()=>{}); });
+  document.querySelectorAll('.vm-tile video').forEach(v=>{ safePlay(v); });
 }
 
 // ===== MUSIC (generative pad) =====
 function setupMusic(){
   const btn=document.getElementById('musicBtn');
-  const audioEl=document.getElementById('bgAudio');
-  // try to use real file if exists, else fallback to synth
-  audioEl.src='assets/videos/memory01.mp4'; // reuse video audio as ambient? but we set muted elsewhere
-  // Instead we will generate pad; use audio element as fallback mute toggle UI
   btn.addEventListener('click', ()=> toggleMusic());
-  // Also attempt autoplay after first interaction is handled in openFirst
 }
 
 function ensureAudioCtx(){
@@ -387,8 +401,8 @@ function playPad(){
     osc.frequency.value=f;
     // slight detune for chorus
     osc.detune.value= (Math.random()-.5)*6;
-    gain.gain.setValueAt(0,0);
-    gain.gain.linearRampToValueAt(now+2.2, 0.045/(i+1));
+    gain.gain.setValueAtTime(0, now);
+    gain.gain.linearRampToValueAtTime(0.045/(i+1), now+2.2);
     osc.connect(filt); filt.connect(gain); gain.connect(masterGain);
     osc.start();
     bgOscillators.push({osc,gain,filt});
