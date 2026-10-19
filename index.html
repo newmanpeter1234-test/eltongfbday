@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#04050a">
+<title>For Anziya — Happy Birthday</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600&family=Inter:wght@300;400;500;600&family=Great+Vibes&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-inner">
+    <p class="loader-label">Preparing something special for Anziya</p>
+    <div class="loader-bar"><span id="loaderProgress"></span></div>
+    <p class="loader-percent" id="loaderPercent">0%</p>
+  </div>
+  <div class="loader-glow"></div>
+</div>
+
+<!-- GLOBAL CANVASES & AMBIENT -->
+<canvas id="particles"></canvas>
+<div class="ambient">
+  <div class="orb orb--gold"></div>
+  <div class="orb orb--violet"></div>
+  <div class="orb orb--rose"></div>
+  <div class="vignette"></div>
+  <div class="grain"></div>
+</div>
+
+<!-- MUSIC TOGGLE -->
+<button id="musicBtn" aria-label="Music">
+  <span class="eq"><i></i><i></i><i></i></span>
+  <span class="music-txt">Sound</span>
+</button>
+
+<!-- SCROLL PROGRESS -->
+<div id="scrollProgress"><span></span></div>
+
+<!-- ===== ACT 1: THE GIFT (LOCKED) ===== -->
+<section id="actGift" class="act act--locked">
+  <div class="gift-content">
+    <p class="eyebrow reveal-up">A little something for you…</p>
+
+    <div id="giftWrap">
+      <div id="giftBox" role="button" tabindex="0" aria-label="Tap the gift">
+        <!-- gift via CSS, not image -->
+        <div class="gift-shadow"></div>
+        <div class="gift-box">
+          <div class="box-lid">
+            <div class="lid-top"></div>
+            <div class="lid-front"></div>
+            <div class="lid-side"></div>
+            <div class="ribbon-h"></div>
+            <div class="ribbon-v"></div>
+            <div class="bow">
+              <div class="bow-knot"></div>
+              <div class="bow-loop l"></div>
+              <div class="bow-loop r"></div>
+              <div class="bow-tail l"></div>
+              <div class="bow-tail r"></div>
+            </div>
+          </div>
+          <div class="box-body">
+            <div class="box-front"></div>
+            <div class="box-side"></div>
+            <div class="box-top-inner"></div>
+            <div class="ribbon-h body-r"></div>
+            <div class="ribbon-v body-r"></div>
+            <div class="light-beam"></div>
+          </div>
+        </div>
+        <div class="gift-glow"></div>
+      </div>
+      <p class="tap-hint"><span class="arrow">↓</span> Tap the gift</p>
+    </div>
+
+    <p class="gift-sub">Almost three years in the making • One unforgettable birthday</p>
+  </div>
+
+  <!-- burst canvas handled by JS -->
+  <div id="giftBurst"></div>
+</section>
+
+<!-- MAIN SCROLLABLE STORY (hidden until gift opened) -->
+<main id="story">
+  <!-- REVEAL -->
+  <section id="reveal" class="section section--reveal">
+    <div class="reveal-inner">
+      <p class="eyebrow gold-track">November 8 • A day the world got brighter</p>
+      <h1 class="title">
+        <span class="title-small">Happy Birthday</span>
+        <span class="title-name">Anziya</span>
+      </h1>
+      <div class="gold-divider"><span></span></div>
+      <p class="reveal-lead">A little journey through some memories…<br>and every reason you mean so much to me.</p>
+      <div class="scroll-indicator">
+        <span>Scroll</span>
+        <div class="needle"></div>
+      </div>
+    </div>
+    <div class="reveal-photo-fader">
+      <img src="assets/photos/photo04.jpg" alt="">
+    </div>
+  </section>
+
+  <!-- CHAPTER NAV -->
+  <div id="chapterNav">
+    <span class="ch-num">01</span>
+    <div class="ch-line"><i id="chProgress"></i></div>
+    <span class="ch-total">/ 10</span>
+  </div>
+
+  <!-- CHAPTER 01: PHOTO MEMORIES -->
+  <section id="photos" class="section section--photos">
+    <header class="chapter-header">
+      <p class="ch-label">Chapter One — The First Meet → Today</p>
+      <h2>Every chapter<br><em>with you</em> has been my favorite</h2>
+      <p class="ch-desc">Almost three years. Countless memories. Still my favorite person.<br>From strangers to friends, from friends to us.</p>
+    </header>
+
+    <div class="photo-stack" id="photoStack">
+      <!-- populated by JS -->
+    </div>
+
+    <!-- COLLAGE HERO -->
+    <div class="collage-wrap reveal-on-scroll">
+      <div class="collage-frame">
+        <img src="assets/photos/collage.jpg" alt="Our collage">
+        <div class="collage-glow"></div>
+      </div>
+      <p class="collage-caption">Four frames. One story. Still writing it.</p>
+    </div>
+  </section>
+
+  <!-- CHAPTER 02: VIDEO MEMORIES -->
+  <section id="videos" class="section section--videos">
+    <header class="chapter-header">
+      <p class="ch-label">Chapter Two — Moving Memories</p>
+      <h2>Moments <em>that move</em></h2>
+      <p class="ch-desc">They play on loop, just like they do in my head. Tap to pause. Tap again to play.</p>
+    </header>
+
+    <div class="video-mosaic">
+      <!-- 6 tiles reuse same video with different object-position & start offsets -->
+      <div class="vm-tile vm--large">
+        <video src="assets/videos/memory01.mp4" muted loop playsinline poster="assets/photos/photo01.jpg"></video>
+        <div class="vm-bar"><span></span></div>
+        <span class="vm-label">The way you laugh</span>
+      </div>
+      <div class="vm-tile">
+        <video src="assets/videos/memory01.mp4" muted loop playsinline poster="assets/photos/photo02.jpg"></video>
+        <div class="vm-bar"><span></span></div>
+        <span class="vm-label">Random moments</span>
+      </div>
+      <div class="vm-tile">
+        <video src="assets/videos/memory01.mp4" muted loop playsinline poster="assets/photos/photo03.jpg"></video>
+        <div class="vm-bar"><span></span></div>
+        <span class="vm-label">Just us</span>
+      </div>
+      <div class="vm-tile vm--tall">
+        <video src="assets/videos/memory01.mp4" muted loop playsinline poster="assets/photos/photo08.jpg"></video>
+        <div class="vm-bar"><span></span></div>
+        <span class="vm-label">Our little world</span>
+      </div>
+      <div class="vm-tile vm--wide">
+        <video src="assets/videos/memory01.mp4" muted loop playsinline poster="assets/photos/photo05.jpg"></video>
+        <div class="vm-bar"><span></span></div>
+        <span class="vm-label">Almost 3 years</span>
+      </div>
+      <div class="vm-tile">
+        <video src="assets/videos/memory01.mp4" muted loop playsinline poster="assets/photos/photo06.jpg"></video>
+        <div class="vm-bar"><span></span></div>
+        <span class="vm-label">My favorite person</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHAPTER 03: TIMELINE -->
+  <section id="timeline" class="section section--timeline">
+    <header class="chapter-header">
+      <p class="ch-label">Chapter Three — Our Timeline</p>
+      <h2>How we became <em>us</em></h2>
+    </header>
+    <div class="tl-wrap">
+      <div class="tl-line"></div>
+      <div class="tl-items" id="tlItems">
+        <!-- JS populates -->
+      </div>
+    </div>
+  </section>
+
+  <!-- QUIET PAUSE -->
+  <section id="pause" class="section section--pause">
+    <div class="pause-inner">
+      <p class="pause-line l1">But there's one more thing…</p>
+      <p class="pause-line l2">I saved something for the end.</p>
+      <div id="giftSmallWrap">
+        <div id="giftSmall" role="button" tabindex="0" aria-label="Open final gift">
+          <div class="gift-box mini">
+            <div class="box-lid">
+              <div class="lid-top"></div><div class="lid-front"></div>
+              <div class="ribbon-h"></div><div class="ribbon-v"></div>
+              <div class="bow"><div class="bow-knot"></div><div class="bow-loop l"></div><div class="bow-loop r"></div></div>
+            </div>
+            <div class="box-body"><div class="box-front"></div><div class="box-side"></div><div class="light-beam"></div></div>
+          </div>
+        </div>
+        <p class="tap-hint sm">Tap to reveal</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINALE -->
+  <section id="finale" class="section section--finale">
+    <canvas id="infinityCanvas"></canvas>
+    <div class="finale-content">
+      <div class="finale-photo-wrap">
+        <img id="finalePhoto" src="assets/photos/photo01.jpg" alt="Anziya">
+        <div class="finale-photo-glow"></div>
+      </div>
+      <h3 class="finale-title">To Be Continued</h3>
+      <div class="finale-lines">
+        <p>Some moments pass, but somehow, they never really leave us.</p>
+        <p>Almost three years down, and I still want a lifetime to go.</p>
+        <p>I don't know what the future holds, but I know who I want in it — <strong>you</strong>.</p>
+        <p>If I had to choose again, I would still choose you — every single time.</p>
+        <p class="finale-bday">Happy Birthday, Anziya ♥</p>
+        <p class="finale-date">November 8 &nbsp;•&nbsp; Forever us</p>
+      </div>
+      <button id="replayBtn" class="btn-gold">Watch it again ↺</button>
+      <p class="finale-foot">Made with all my heart — forever yours.</p>
+    </div>
+    <div class="stardust" id="stardust"></div>
+  </section>
+
+  <footer class="site-footer">
+    <p>For Anziya • Nov 8 • With love, always</p>
+  </footer>
+</main>
+
+<!-- AUDIO (hidden) -->
+<audio id="bgAudio" loop preload="auto" crossorigin="anonymous"></audio>
+
+<!-- LIBS -->
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
+<script src="https://unpkg.com/split-type@0.3.4/umd/index.js"></script>
+
+<script src="js/config.js"></script>
+<script src="js/particles.js"></script>
+<script src="js/script.js"></script>
+</body>
+</html>
